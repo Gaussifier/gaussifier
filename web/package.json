@@ -1,0 +1,27 @@
+{
+  "name": "gaussifier-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Browser inference engine and 2D Gaussian splat viewer for gaussifier-sampler",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b packages/wgsl packages/wasm-oversampler packages/inference packages/viewer",
+    "build:wasm": "npm run build:wasm --workspace packages/wasm-oversampler",
+    "build:bundle": "npm run build:bundle --workspace packages/viewer",
+    "build:demo": "npm run build --workspace apps/demo",
+    "test": "npm run test --workspaces --if-present",
+    "test:browser": "node tools/browser-run.mjs --all",
+    "check:demo": "node tools/demo-check.mjs",
+    "serve": "node tools/server.mjs --dir apps/demo/dist --http 8080 --https 8443 --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "@webgpu/types": "^0.1.60",
+    "puppeteer-core": "^25.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}
