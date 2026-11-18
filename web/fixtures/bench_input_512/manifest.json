@@ -1,0 +1,72 @@
+{
+ "name": "bench_input_512",
+ "source_image": "tests/fixtures/bench_input_512.png",
+ "crop": {
+  "w": 512,
+  "h": 512,
+  "requested": null
+ },
+ "padded": {
+  "width": 512,
+  "height": 512
+ },
+ "n": 95572,
+ "n_max": 143358,
+ "seed": 12345,
+ "states": 7,
+ "store_head": true,
+ "model_version": "0.12.0",
+ "weights_sha256": {
+  "stage1": "feeca419634a6b028bb3d7fdb6f4545ad271249b8cb023611903b29568be805f",
+  "head": "9c7c7edbe403b4d842bb450a573719f174fba50168fa3309293e4ba6d260394f"
+ },
+ "torch": "2.12.0+cu130",
+ "device": "NVIDIA L40S",
+ "psnr_padded_db": [
+  20.95846431992943,
+  32.386741809307495,
+  35.87853398966117,
+  37.474544658102374,
+  38.15470929615574,
+  38.5213796600661,
+  38.75381506910238
+ ],
+ "psnr_crop_db": [
+  20.95846431992943,
+  32.386741809307495,
+  35.87853398966117,
+  37.474544658102374,
+  38.15470929615574,
+  38.5213796600661,
+  38.75381506910238
+ ],
+ "envelope": {
+  "runs": 5,
+  "p50_px": 0.0,
+  "p95_px": 0.125,
+  "p99_px": 0.25,
+  "max_px": 1.0458250045776367,
+  "fraction_over_half_px": 0.00015956556308083236
+ },
+ "consistency": {
+  "forward_map_rerun_max_abs_diff": 0.0,
+  "owner_rerun_mass_max_abs_diff": 3.622006893157959,
+  "owner_rerun_cells_drifted": 2,
+  "latent_replay_max_abs_diff": 0.0,
+  "cov_xy_replay_max_abs_diff": 0.0
+ },
+ "timings_ms": {
+  "load": 185.67,
+  "forward_map": 219.93,
+  "oversample": 14.45,
+  "merge": 59.06,
+  "envelope": 1512.37,
+  "production_sample": 2789.55,
+  "checks": 6.85,
+  "write": 2647.09
+ },
+ "files": {
+  "shapes": "shapes.json",
+  "scene": "scene.npz"
+ }
+}

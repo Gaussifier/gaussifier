@@ -1,0 +1,58 @@
+{
+  "fused_fp16": {
+    "max_ms": 3.84,
+    "mean_ms": 3.7721,
+    "min_ms": 3.6065,
+    "p99_ms": 3.839,
+    "stddev_ms": 0.0433
+  },
+  "fused_fp16_k7": {
+    "max_ms": 5.2818,
+    "mean_ms": 5.2086,
+    "min_ms": 5.1395,
+    "p99_ms": 5.2818,
+    "stddev_ms": 0.0368
+  },
+  "fused_fp16_k7@rtx5090": {
+    "max_ms": 3.3546,
+    "mean_ms": 3.3238,
+    "min_ms": 3.2509,
+    "p99_ms": 3.3536,
+    "stddev_ms": 0.0331
+  },
+  "fused_fp8": {
+    "max_ms": 3.6311,
+    "mean_ms": 3.5725,
+    "min_ms": 3.4273,
+    "p99_ms": 3.627,
+    "stddev_ms": 0.0534
+  },
+  "fused_fp8_k7": {
+    "max_ms": 5.0135,
+    "mean_ms": 4.9147,
+    "min_ms": 4.5343,
+    "p99_ms": 5.0115,
+    "stddev_ms": 0.1057
+  },
+  "fused_fp8_k7@rtx5090": {
+    "max_ms": 3.4908,
+    "mean_ms": 3.4555,
+    "min_ms": 3.4029,
+    "p99_ms": 3.4857,
+    "stddev_ms": 0.0236
+  },
+  "trt_aoti_fused": {
+    "max_ms": 11.3861,
+    "mean_ms": 11.1869,
+    "min_ms": 11.1383,
+    "p99_ms": 11.3861,
+    "stddev_ms": 0.0244
+  },
+  "trt_aoti_fused_k7": {
+    "max_ms": 15.1072,
+    "mean_ms": 14.886,
+    "min_ms": 14.8569,
+    "p99_ms": 15.1072,
+    "stddev_ms": 0.0284
+  }
+}

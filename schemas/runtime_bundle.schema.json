@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Gaussifier/gaussifier/schemas/runtime_bundle.schema.json",
+  "title": "Gaussifier sampler runtime bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "legacy_model_bundle_sha256",
+    "runtime_version",
+    "python",
+    "cpp",
+    "backends",
+    "frozen_gn",
+    "regressions"
+  ],
+  "properties": {
+    "schema_version": { "const": 2 },
+    "legacy_model_bundle_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "runtime_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "python": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "requires",
+        "pytorch",
+        "entrypoint",
+        "default_backend",
+        "bundled_model_artifact",
+        "bundled_model_sha256"
+      ],
+      "properties": {
+        "package": { "const": "gaussifier-sampler" },
+        "requires": { "type": "string", "minLength": 1 },
+        "pytorch": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.\\*$" },
+        "entrypoint": { "const": "gaussifier-sample" },
+        "default_backend": { "const": "fused" },
+        "bundled_model_sha256": { "$ref": "#/properties/legacy_model_bundle_sha256" },
+        "bundled_model_artifact": {
+          "type": "string",
+          "pattern": "^src/gaussifier_sampler/weights/[^/]+\\.pt$"
+        }
+      }
+    },
+    "cpp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executable", "linkage", "legacy_executable", "legacy_build_option", "legacy_removal"
+      ],
+      "properties": {
+        "executable": { "const": "gaussifier_fused_infer" },
+        "linkage": { "const": "torch-free" },
+        "legacy_executable": { "const": "gaussifier_infer" },
+        "legacy_build_option": { "const": "GAUSSIFIER_BUILD_LEGACY" },
+        "legacy_removal": { "const": "next release" }
+      }
+    },
+    "backends": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/backend" }
+    },
+    "frozen_gn": { "$ref": "#/$defs/frozen_gn" },
+    "regressions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/regression" }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "bytes", "sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^src/gaussifier_sampler/weights/frozen_gn/[^/]+$" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/properties/legacy_model_bundle_sha256" }
+      }
+    },
+    "frozen_gn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_precision", "rendered_states", "fp8_plan", "artifacts",
+        "kodak_k7_psnr_db", "cohort256_k7_tail_db"
+      ],
+      "properties": {
+        "default_precision": { "const": "fp16" },
+        "rendered_states": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "fp8_plan": { "type": "string", "minLength": 1 },
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stage1.pt", "head.pt", "precision_plan_release.json",
+            "fm_fp16.gffm", "head_fp16.gfch", "fm_fp8.gffm", "head_fp8.gfch"
+          ],
+          "properties": {
+            "stage1.pt": { "$ref": "#/$defs/artifact" },
+            "head.pt": { "$ref": "#/$defs/artifact" },
+            "precision_plan_release.json": { "$ref": "#/$defs/artifact" },
+            "fm_fp16.gffm": { "$ref": "#/$defs/artifact" },
+            "head_fp16.gfch": { "$ref": "#/$defs/artifact" },
+            "fm_fp8.gffm": { "$ref": "#/$defs/artifact" },
+            "head_fp8.gfch": { "$ref": "#/$defs/artifact" }
+          }
+        },
+        "kodak_k7_psnr_db": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fp16", "fp8", "v0.11.1"],
+          "properties": {
+            "fp16": { "type": "number" },
+            "fp8": { "type": "number" },
+            "v0.11.1": { "type": "number" }
+          }
+        },
+        "cohort256_k7_tail_db": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fp16", "v0.11.1"],
+          "properties": { "fp16": { "type": "number" }, "v0.11.1": { "type": "number" } }
+        }
+      }
+    },
+    "backend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "implementation", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "role": { "enum": ["reference", "production", "point-placement", "legacy"] },
+        "implementation": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["supported", "experimental", "disabled", "deprecated"] }
+      }
+    },
+    "absolute_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "tolerance"],
+      "properties": {
+        "baseline": { "type": "number" },
+        "tolerance": { "type": "number", "minimum": 0 }
+      }
+    },
+    "factor_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "max_factor"],
+      "properties": {
+        "baseline": { "type": "number", "minimum": 0 },
+        "max_factor": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "fixture", "profile", "device", "timing", "parameters", "metrics"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "fixture": { "type": "string", "minLength": 1 },
+        "profile": { "type": "string", "minLength": 1 },
+        "baseline_key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+(@[a-z0-9]+)?$"
+        },
+        "device": { "type": "string", "minLength": 1 },
+        "timing": { "enum": ["sustained CUDA graph", "legacy end-to-end"] },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["points", "states"],
+          "properties": {
+            "points": {
+              "oneOf": [
+                { "const": "auto" },
+                { "type": "integer", "minimum": 1 }
+              ]
+            },
+            "states": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "psnr_db",
+            "mean_latency_ms",
+            "p99_latency_ms",
+            "stddev_latency_ms"
+          ],
+          "properties": {
+            "psnr_db": { "$ref": "#/$defs/absolute_metric" },
+            "mean_latency_ms": { "$ref": "#/$defs/absolute_metric" },
+            "p99_latency_ms": { "$ref": "#/$defs/absolute_metric" },
+            "stddev_latency_ms": { "$ref": "#/$defs/factor_metric" }
+          }
+        }
+      }
+    }
+  }
+}
